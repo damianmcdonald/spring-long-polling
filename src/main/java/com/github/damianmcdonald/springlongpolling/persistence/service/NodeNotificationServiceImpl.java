@@ -30,7 +30,7 @@ public class NodeNotificationServiceImpl implements NodeNotificationService {
 
         // delete the database entities so we don't repeat notification sending
         notifications.stream().forEach(node -> dao.delete(node));
-        dao.flush();
+        flush();
 
         // return the copied list
         return clonedNotifications;
