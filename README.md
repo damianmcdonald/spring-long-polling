@@ -6,7 +6,7 @@ Overview
 
 This project demonstrates the use of Spring's [DeferredResult](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/request/async/DeferredResult.html) in order to support long-polling server-side push notifications.
 
-In addition, this project demonstrates how to make use of a shared database in order to coordinate long-polling notifications amongst systems that are participating in a cluster configuration.
+In addition, this project demonstrates how to make use of a shared database in order to coordinate long-polling notifications among systems that participate in a cluster configuration.
 
 When an event is triggered that must be notified to long-polling clients, the cluster node that initiated the event will write notification messages to the shared database.
 
@@ -28,23 +28,31 @@ Follow these steps to get started:
 
 1) Git-clone this repository.
 
-    git clone git://github.com/damianmcdonald/spring-long-polling.git my-project
+```
+git clone git://github.com/damianmcdonald/spring-long-polling.git my-project
 
+```
 
 2) Change directory into your clone:
 
-    cd my-project
+```
+cd my-project
+```
 
 3) Use Maven to compile everything:
 
- mvn clean package
-
+```
+mvn clean package
+```
 
 4) Start the application:
 
-    java -jar target/spring-long-polling-0.0.1-SNAPSHOT.jar
+```
+java -jar target/spring-long-polling-0.0.1-SNAPSHOT.jar
+```
 
 5) Connect to the app in a browser:
 
-    http://localhost:8080
-
+```
+http://localhost:8080
+```
