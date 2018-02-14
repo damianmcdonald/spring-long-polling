@@ -1,43 +1,50 @@
-Long Polling Example
+Spring Polling Example
 ===================
-
-This project is a derivative of <https://github.com/sgilda/wildfly-quickstart/tree/master/helloworld-html5/>
 
 Overview
 -----------
 
-This project demonstrates the use of JavaEE Asynchronous Responses in order to support long-polling server-side push notifications.
+This project demonstrates the use of Spring's [DeferredResult](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/request/async/DeferredResult.html) in order to support long-polling server-side push notifications.
 
-Deploying the application
--------------------------
+In addition, this project demonstrates how to make use of a shared database in order to coordinate long-polling notifications amongst systems that are participating in a cluster configuration.
 
-First you need to start the Wildfly container. To do this, run
+When an event is triggered that must be notified to long-polling clients, the cluster node that initiated the event will write notification messages to the shared database.
 
-    $JBOSS_HOME/bin/standalone.sh
+Each cluster node has a [database listener](https://github.com/damianmcdonald/spring-long-polling/blob/master/src/main/java/com/github/damianmcdonald/springlongpolling/longpolling/LongPollingDatabaseListener.java) which polls the database every 5 seconds to check for notification updates.
 
-or if you are using windows
+Each cluster node will get it's node specific updates from the database and will update the long-polling clients that are registered with that node.
 
-    $JBOSS_HOME/bin/standalone.bat
+Getting started
+-----------------
 
-To deploy the application, you first need to produce the archive to deploy using
-the following Maven goal:
+The library was built using the following toolchain:
 
-    mvn package
+* http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java Oracle JDK 1.8]
+* https://maven.apache.org/download.cgi[Maven 3.2.3]
 
-You can now deploy the artifact by executing the following command:
+Your mileage may vary with versions different than the ones specified above.
 
-    mvn wildfly:deploy
+Follow these steps to get started:
 
-This will deploy both the client and service applications.
+1) Git-clone this repository.
 
-The application will be running at the following URL <http://localhost:8080/wildfly-long-polling/>.
+    git clone git://github.com/damianmcdonald/spring-long-polling.git my-project
 
-To undeploy run this command:
 
-    mvn wildfly:undeploy
+2) Change directory into your clone:
 
-You can also start the JBoss container and deploy the project using JBoss Tools. See the
-<a href="https://github.com/wildfly/quickstart/guide/Introduction/" title="Getting Started Developing Applications Guide">Getting Started Developing Applications Guide</a>
-for more information.
+    cd my-project
 
+3) Use Maven to compile everything:
+
+ mvn clean package
+
+
+4) Start the application:
+
+    java -jar target/spring-long-polling-0.0.1-SNAPSHOT.jar
+
+5) Connect to the app in a browser:
+
+    http://localhost:8080
 
