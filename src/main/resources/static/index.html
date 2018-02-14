@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Long Polling Example</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+        var useWebSockets = true;
+
+        $( document ).ready( function() {
+
+            $( '#register' ).click( function( event ) {
+                event.preventDefault();
+                var dossierId = $('#dossier-id-input').val();
+                if (dossierId == "") {
+                    alert("Please enter a numerical Dossier Id.");
+                    return;
+                }
+                console.log("Calling poll() with dossier id: " + dossierId);
+                $('#results').append("<li><span style=\"color:blue;\">Registered client for long-polling for dossier id "+dossierId+"</li>");
+
+                // simulate the WebSocket connection - this will always fail
+                if(useWebSockets) {
+                    console.log("Simulating WebSocket failure.");
+                    var wsUri = "ws://non.existent.url/";
+                    var websocket = new WebSocket(wsUri);
+                    websocket.onerror = function (evt) {
+                        useWebSockets = false;
+                        // on WebSocket error, gracefully fall back to long polling strategy
+                        console.log("WebSocket error, gracefully fall back to long polling strategy.");
+                        poll(dossierId);
+                    };
+                } else {
+                    console.log("Calling poll() with dossier id: " + dossierId);
+                    poll(dossierId);
+                }
+            });
+
+            $( '#simulate' ).click( function( event ) {
+                event.preventDefault();
+                var dossierId = $('#dossier-id-input').val();
+                console.log("Calling simulate() with dossier id: " + dossierId);
+                simulate(dossierId);
+                $('#results').append("<li><span style=\"color:green;\">Simulating event for dossier id "+dossierId+"</li>");
+                $('#results').append("<li><span style=\"color:green;\">Be patient, the event is fired asynchronously and may have a delay of a few seconds</li>");
+            });
+
+            /* long-polling function that calls creates a looped call to the server.
+             * This looped call executes:
+             * - every 60 seconds if there is no data sent from server;
+             * - immediately if data is received from the server;
+             */
+            function poll(dossierId){
+                $.ajax({
+                    url: "register/"+dossierId,
+                    success: function(data, status, jqXHR) {
+                        // do something with the data
+                        console.log(data);
+                        $('#results').append("<li><span style=\"color:purple; font-weight: bold;\">"+data+"</li>");
+                        setTimeout( poll(dossierId), 10 );
+                    },
+                    error: function(jqXHR, status, errorThrown) {
+                        if (status=='timeout') {
+                            console.log( 'request timed out.' );
+                            setTimeout( poll(dossierId), 10 );
+                        }
+                        else {
+                            console.log(status);
+                            setTimeout( poll(dossierId), 60000 );
+                        }
+                    },
+                    dataType: "text",
+                    type:'GET',
+                    timeout: 60000
+                });
+            }
+
+            function simulate(dossierId){
+                $.ajax({
+                    url: "simulate/"+dossierId,
+                    success: function(data, status, jqXHR) {
+                        // do something with the data
+                        console.log("Event simulated successfully.");
+                    },
+                    type:'POST'
+                });
+            }
+
+        }); // (document).ready
+
+    </script>
+</head>
+<body>
+<div>Long-polling example</div>
+<hr>
+<div>
+    <span>Enter dossier id: <input type="text" id="dossier-id-input"></span>
+    <button id="register">Register for dossier updates</button>
+    <br>
+    <button id="simulate">Simulate notification event on dossier</button>
+    <ul id="results"></ul>
+</div>
+
+</body>
+</html>
