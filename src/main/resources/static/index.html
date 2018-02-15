@@ -57,7 +57,7 @@
                     success: function(data, status, jqXHR) {
                         // do something with the data
                         console.log(data);
-                        $('#results').append("<li><span style=\"color:purple; font-weight: bold;\">"+data+"</li>");
+                        $('#results').append("<li style=\"color:purple;\"><pre>"+JSON.stringify(JSON.parse(data), null, 4)+"</pre></li>");
                         setTimeout( poll(dossierId), 10 );
                     },
                     error: function(jqXHR, status, errorThrown) {

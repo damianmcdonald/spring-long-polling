@@ -66,4 +66,6 @@ public class NodeNotification implements Serializable {
         this.notificationPayload = notificationPayload;
     }
 
+
+
 }

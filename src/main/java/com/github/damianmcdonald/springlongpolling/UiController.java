@@ -39,7 +39,7 @@ public class UiController {
     @ResponseBody
     public String simulateEvent(@PathVariable("dossierId") final long dossierId) {
         LOGGER.log(Level.INFO, "Simulating event for dossier id: " + dossierId);
-        simulator.simulateIncomingNotification();
+        simulator.simulateIncomingNotification(dossierId);
         return "Simulating event for dossier Id: " + dossierId;
     }
 }

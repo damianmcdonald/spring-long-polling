@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -16,9 +18,15 @@ public class NodeNotificationServiceImpl implements NodeNotificationService {
     @Autowired
     private NodeNotificationDao dao;
 
+    private Date getTimestamp() {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, -10);
+        return cal.getTime();
+    }
+
     @Override
     public List<NodeNotification> getNotifications(final String nodeId) {
-        return dao.getNotifications(nodeId);
+        return dao.getNotifications(nodeId, getTimestamp());
     }
 
     @Override
@@ -38,7 +46,7 @@ public class NodeNotificationServiceImpl implements NodeNotificationService {
 
     @Override
     public boolean containsNotifications(final String nodeId) {
-        return !dao.getNotifications(nodeId).isEmpty();
+        return !dao.getNotifications(nodeId, getTimestamp()).isEmpty();
     }
 
     @Override
